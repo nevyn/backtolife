@@ -1,5 +1,17 @@
 <template name="home">
   <h1>Welcome to Back to Life.</h1>
 
-  {{loginButtons}}
+  <h2>My teams</h2>
+  <ul>
+    {{#each teams}}
+      {{name}}
+    {{/each}}
+  </ul>
+
+  <h2>My games</h2>
+  <ul>
+    {{#each games}}
+      <a href="{{pathFor 'game'}}">{{name}}</a>
+    {{/each}}
+  </ul>
 </template>

@@ -24,7 +24,7 @@ Router.map(function () {
     waitOn: function() {
       return [
         Meteor.subscribe('games'),
-        Meteor.subscribe('teams', this.data().game ? this.data().game._id : null)
+        Meteor.subscribe('teams', this.params._id)
       ];
     },
 

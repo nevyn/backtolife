@@ -24,7 +24,7 @@ Router.map(function () {
     waitOn: function() {
       return [
         Meteor.subscribe('games'),
-        Meteor.subscribe('teams', this.params._id)
+        Meteor.subscribe('teams-and-characters', this.params._id)
       ];
     },
 
@@ -40,7 +40,7 @@ Router.map(function () {
         myTeam: myTeam,
         game: game,
         characters: Characters.find(),
-        myCharacters: myTeam ? Characters.find({team: myTeam._id}) : null
+        myCharacters: Characters.find({team: myTeam && myTeam._id})
       };
     }
   });

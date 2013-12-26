@@ -1,4 +1,4 @@
-Meteor.publish('teams', function(gameId) {
+Meteor.publish('teams-and-characters', function(gameId) {
   if (!this.userId) return;
 
   // Always publish our own teams
@@ -12,7 +12,8 @@ Meteor.publish('teams', function(gameId) {
   if (gameId) {
     var game = GetGameAndCheckPermission(gameId, this.userId);
 
-    return Teams.find({_id: {$in: game.teams}});
+    return [Characters.find({team: {$in: game.teams}}),
+            Teams.find({_id: {$in: game.teams}})];
   }
 });
 

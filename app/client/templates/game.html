@@ -21,5 +21,16 @@
         {{/if}}
       {{/with}}
     </div>
+
+    {{#each myCharacters}}
+      <div class="character">
+        <h3>{{name}}</h3>
+        <ul>
+          {{#each arrayify attributes}}
+            <li>{{key}}: {{value}}</li>
+          {{/each}}
+        </ul>
+      </div>
+    {{/each}}
   </div>
 </template>

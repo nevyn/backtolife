@@ -1,16 +1,24 @@
 <template name="game">
-  <p><a href="{{pathFor 'home'}}">Home</a></p>
-  <h1>Game: {{game.name}}</h1>
-  <div>Teams:
-    <ul>
-      {{#each teams}}
-        <li>{{name}}
-          {{#if isItOurTurn}}
-            (TURN)
-          {{/if}}
-        </li>
-
-      {{/each}}
-    </ul>
+  <div id="game">
+    <p><a href="{{pathFor 'home'}}">Home</a></p>
+    <h1>Game: {{game.name}}</h1>
+    <div>Teams:
+      <ul>
+        {{#each teams}}
+          <li>{{name}}
+            {{#if isItOurTurn}}
+              (TURN)
+            {{/if}}
+          </li>
+        {{/each}}
+      </ul>
+    </div>
+    <div>
+      {{#with myTeam}}
+        {{#if isItOurTurn}}
+          <button id="end-turn">End turn</button>
+        {{/if}}
+      {{/with}}
+    </div>
   </div>
 </template>

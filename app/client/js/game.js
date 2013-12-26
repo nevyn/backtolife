@@ -12,4 +12,13 @@ var helpers = {
   }
 };
 
+var events = {
+  'click #end-turn': function(e, tmpl) {
+    Meteor.call('endMyTurn', Router.getData().game._id, function(err, res) {
+      console.log(err, res);
+    });
+  }
+};
+
 Template.game.helpers(helpers);
+Template.game.events(events);

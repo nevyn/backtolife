@@ -10,18 +10,9 @@ Meteor.publish('teams', function(gameId) {
    * all teams in that game.
    */
   if (gameId) {
-    var game = Games.find({
-      teams: {
-        $in: getMyTeamsId(this.userId)
-      },
-      _id: gameId
-    });
+    var game = GetGameAndCheckPermission(gameId, this.userId);
 
-    if (!game.count()) {
-      throw new Meteor.Error(403, "Permission denied");
-    }
-
-    return Teams.find({_id: {$in: game.fetch()[0].teams}});
+    return Teams.find({_id: {$in: game.teams}});
   }
 });
 
@@ -31,7 +22,9 @@ Meteor.publish('games', function() {
   // Publish all games my teams are a part of
   return Games.find({
     teams: {
-      $in: getMyTeamsId(this.userId)
+      $in: Teams.find({owner: this.userId}).map(function(t) {
+        return t._id
+      })
     }
   });
 });

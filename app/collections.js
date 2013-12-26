@@ -1,5 +1,6 @@
 Teams = new Meteor.Collection("teams");
 Characters = new Meteor.Collection("characters");
+
 Games = new Meteor.Collection("games", {
 
   transform: function (game) {
@@ -18,3 +19,6 @@ Games = new Meteor.Collection("games", {
     return game;
   }
 });
+
+Abilities = new Meteor.Collection("abilities");
+Events = new Meteor.Collection("events");

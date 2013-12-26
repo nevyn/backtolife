@@ -29,11 +29,16 @@ Router.map(function () {
     },
 
     data: function() {
-      var myTeam = Teams.findOne({owner: Meteor.userId()});
+      var game = Games.findOne({_id: this.params._id}),
+          myTeam = Teams.findOne({
+            owner: Meteor.userId(),
+            _id: {$in: game? game.teams : []}
+          });
 
       return {
         teams: Teams.find(),
-        game: Games.findOne({_id: this.params._id}),
+        myTeam: myTeam,
+        game: game,
         characters: Characters.find(),
         myCharacters: myTeam ? Characters.find({team: myTeam._id}) : null
       };

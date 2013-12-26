@@ -14,6 +14,11 @@ Games = new Meteor.Collection("games", {
         game.currentTurn = game.teams[i];
       }
       i++;
+
+      // In case something is wrong, don't freeze.
+      if (game.playedThisTurn.length === game.teams.length) {
+        break;
+      }
     };
 
     return game;

@@ -14,7 +14,28 @@ Characters = new Meteor.Collection("characters", {
     }
 
     character.getStamina = function() {
-      return parseInt(10 * ((attrs.strength * 0.75) + (attrs.agility * 0.45) + (attrs.psyche * 0.12)), "10");
+      var stamina =
+        (attrs.strength * 0.75) +
+        (attrs.agility * 0.55) +
+        (attrs.psyche * 0.12);
+
+      return parseInt(stamina * 10, "10");
+    }
+
+    character.getDamage = function() {
+      var damage =
+        (attrs.combat * 0.75) +
+        (attrs.strength * 1.25);
+
+      return parseInt(damage * 10, "10");
+    }
+
+    character.getMagicResistance = function() {
+      var resistance =
+        (attrs.agility * 0.25) +
+        (attrs.psyche * 0.45);
+
+      return parseInt(resistance * 10, "10");
     }
 
     return character;

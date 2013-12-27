@@ -29,3 +29,7 @@ Meteor.publish('games', function() {
     }
   });
 });
+
+Meteor.publish('abilities', function() {
+  return Abilities.find();
+});

@@ -10,7 +10,7 @@ Characters = new Meteor.Collection("characters", {
     }
 
     character.getMana = function() {
-      return attrs.mana ? attrs.mana * 100 : 0;
+      return attrs.magic ? attrs.magic * 100 : 0;
     }
 
     character.getStamina = function() {
@@ -67,4 +67,3 @@ Games = new Meteor.Collection("games", {
 });
 
 Abilities = new Meteor.Collection("abilities");
-Events = new Meteor.Collection("events");

@@ -42,5 +42,27 @@ Meteor.methods({
     });
 
     return "Great success";
+  },
+  'performAbility': function(gameId, abilityName, characterId) {
+    var game = GetGameAndCheckPermission(gameId, Meteor.userId());
+    var character = GetCharacterAndCheckPermission(gameId, characterId, Meteor.userId());
+    var ability = Abilities.findOne({name: abilityName});
+
+    if (!ability) {
+      throw new Meteor.Error(500, "No such ability");
+    }
+
+    var gameEvent = {
+      ability: ability.name,
+      state: "started",
+      character: character._id,
+      createdAt: new Date()
+    };
+
+    //TODO: ability.target
+
+    Games.update(gameId, {
+      $push: {events: gameEvent}
+    });
   }
 });

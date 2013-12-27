@@ -35,12 +35,16 @@ Router.map(function () {
             _id: {$in: game? game.teams : []}
           });
 
+      // Not sure why this is needed. Shouldn't waitOn handle this?
+      if (!myTeam) return;
+
       return {
         teams: Teams.find(),
         myTeam: myTeam,
         game: game,
         characters: Characters.find(),
-        myCharacters: Characters.find({team: myTeam && myTeam._id})
+        abilities: Abilities.find(),
+        myCharacters: Characters.find({team: myTeam._id})
       };
     }
   });

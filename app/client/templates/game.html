@@ -22,6 +22,7 @@
       {{/with}}
     </div>
 
+    <div>
     {{#each myCharacters}}
       <div class="character">
         <h3>{{name}}</h3>
@@ -35,7 +36,22 @@
             <li>{{key}}: {{value}}</li>
           {{/each}}
         </ul>
+        {{#each abilities}}
+        <button
+          class="ability"
+          data-ability="{{this}}"
+          data-character="{{../_id}}">{{this}}</button>
+        {{/each}}
       </div>
     {{/each}}
+    </div>
+
+
+    <h2 class="clear">Events</h2>
+    <ul>
+      {{#each game.events}}
+      <li>{{getCharacterName character}}: {{state}} {{ability}}</li>
+      {{/each}}
+    </ul>
   </div>
 </template>

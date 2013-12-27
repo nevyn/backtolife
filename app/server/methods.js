@@ -43,6 +43,11 @@ Meteor.methods({
 
     return "Great success";
   },
+  /*
+   * Handle the click of an ability button.
+   *
+   * This step starts the ability event. It's possible that other steps conclude it.
+   */
   'performAbility': function(gameId, abilityName, characterId) {
     var game = GetGameAndCheckPermission(gameId, Meteor.userId());
     var character = GetCharacterAndCheckPermission(gameId, characterId, Meteor.userId());
@@ -60,6 +65,7 @@ Meteor.methods({
     };
 
     //TODO: ability.target
+    //TODO: move events into a separate collection
 
     Games.update(gameId, {
       $push: {events: gameEvent}

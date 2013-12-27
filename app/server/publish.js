@@ -30,6 +30,13 @@ Meteor.publish('games', function() {
   });
 });
 
+Meteor.publish('events', function(gameId) {
+  if (!gameId) return;
+
+  var game = GetGameAndCheckPermission(gameId, this.userId);
+  return Events.find({game: gameId});
+});
+
 Meteor.publish('abilities', function() {
   return Abilities.find();
 });

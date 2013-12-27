@@ -48,7 +48,7 @@ Meteor.methods({
    *
    * This step starts the ability event. It's possible that other steps conclude it.
    */
-  'performAbility': function(gameId, abilityName, characterId) {
+  'newAbilityEvent': function(gameId, abilityName, characterId) {
     var game = GetGameAndCheckPermission(gameId, Meteor.userId());
     var character = GetCharacterAndCheckPermission(gameId, characterId, Meteor.userId());
     var ability = Abilities.findOne({name: abilityName});
@@ -61,14 +61,18 @@ Meteor.methods({
       ability: ability.name,
       state: "started",
       character: character._id,
+      game: game._id,
       createdAt: new Date()
     };
 
     //TODO: ability.target
-    //TODO: move events into a separate collection
 
-    Games.update(gameId, {
-      $push: {events: gameEvent}
-    });
+    Events.insert(gameEvent);
+
+    return "Great success";
+  },
+
+  'abilityEventInput': function(gameId, eventId) {
+    // do some magic
   }
 });

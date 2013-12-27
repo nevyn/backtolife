@@ -31,6 +31,16 @@ var events = {
                   console.log(err, res);
                 }
     );
+  },
+  // TODO: Finalize
+  'submit .eventInput': function(e, tmpl) {
+    Meteor.call('eventInput',
+                Router.getData().game._id,
+                this._id,
+                function(err, res) {
+                  console.log(err, res);
+                }
+    );
   }
 };
 

@@ -2,6 +2,26 @@
   <div id="game">
     <p><a href="{{pathFor 'home'}}">Home</a></p>
     <h1>Game: {{game.name}}</h1>
+    {{#if activeEvents}}
+    <div>Active events:</div>
+    <ul>
+      {{#each activeEvents}}
+        <li>
+          {{character.name}}:
+          {{ability.input.0.text}}
+          {{#if equals ability.input.0.type "amount"}}
+            <form class="eventInput">
+              1
+              <input type="range" min="1" max="{{character.getStamina}}">
+              {{character.getStamina}}
+              <input type="submit" value="move">
+            </form>
+          {{/if}}
+        </li>
+      {{/each}}
+    </ul>
+    {{/if}}
+
     <div>Turn: {{game.turnNr}}</div>
     <div>Teams:
       <ul>
@@ -37,20 +57,24 @@
           {{/each}}
         </ul>
         {{#each abilities}}
-        <button
-          class="ability"
-          data-ability="{{this}}"
-          data-character="{{../_id}}">{{this}}</button>
+          <button
+            class="ability"
+            data-ability="{{this}}"
+            data-character="{{../_id}}">{{this}}</button>
         {{/each}}
       </div>
     {{/each}}
     </div>
 
 
-    <h2 class="clear">Events</h2>
+    <h2 class="clear">History</h2>
     <ul>
-      {{#each game.events}}
-      <li>{{getCharacterName character}}: {{state}} {{ability}}</li>
+      {{#each history}}
+        <li>
+          {{getCharacterName character}}:
+          {{state}}
+          {{ability}}
+        </li>
       {{/each}}
     </ul>
   </div>

@@ -24,6 +24,8 @@ Router.map(function () {
     waitOn: function() {
       return [
         Meteor.subscribe('games'),
+        Meteor.subscribe('abilities'),
+        Meteor.subscribe('events', this.params._id),
         Meteor.subscribe('teams-and-characters', this.params._id)
       ];
     },
@@ -33,6 +35,14 @@ Router.map(function () {
           myTeam = Teams.findOne({
             owner: Meteor.userId(),
             _id: {$in: game? game.teams : []}
+          }),
+          activeEvents = Events.find({
+            state: {$ne: "completed"}
+          }).map(function (e) {
+            // TODO: Move to transform
+            e.ability = Abilities.findOne({name: e.ability});
+            e.character = Characters.findOne({_id: e.character});
+            return e;
           });
 
       // Not sure why this is needed. Shouldn't waitOn handle this?
@@ -44,6 +54,10 @@ Router.map(function () {
         game: game,
         characters: Characters.find(),
         abilities: Abilities.find(),
+        history: Events.find({
+            state: "completed"
+          }),
+        activeEvents: activeEvents,
         myCharacters: Characters.find({team: myTeam._id})
       };
     }

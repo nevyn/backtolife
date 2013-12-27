@@ -67,3 +67,4 @@ Games = new Meteor.Collection("games", {
 });
 
 Abilities = new Meteor.Collection("abilities");
+Events = new Meteor.Collection("events");

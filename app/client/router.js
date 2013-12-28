@@ -35,18 +35,24 @@ Router.map(function () {
           myTeam = Teams.findOne({
             owner: Meteor.userId(),
             _id: {$in: game? game.teams : []}
-          }),
-          activeEvents = Events.find({
-            state: {$ne: "completed"}
-          }).map(function (e) {
-            // TODO: Move to transform
-            e.ability = Abilities.findOne({name: e.ability});
-            e.character = Characters.findOne({_id: e.character});
-            return e;
           });
 
       // Not sure why this is needed. Shouldn't waitOn handle this?
       if (!myTeam) return;
+
+      var activeEvents = Events.find({
+        state: {$ne: "completed"},
+        character: {
+          $in: Characters.find({team: myTeam._id}).map(function (c) {
+            return c._id
+          })
+        }
+      }).map(function (e) {
+        // TODO: Move to transform
+        e.ability = Abilities.findOne({name: e.ability});
+        e.character = Characters.findOne({_id: e.character});
+        return e;
+      });
 
       return {
         teams: Teams.find(),

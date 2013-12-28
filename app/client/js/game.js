@@ -23,7 +23,7 @@ var events = {
     });
   },
   'click .ability': function(e, tmpl) {
-    Meteor.call('performAbility',
+    Meteor.call('newAbilityEvent',
                 Router.getData().game._id,
                 $(e.target).data('ability'),
                 $(e.target).data('character'),
@@ -32,11 +32,32 @@ var events = {
                 }
     );
   },
-  // TODO: Finalize
-  'submit .eventInput': function(e, tmpl) {
-    Meteor.call('eventInput',
+
+  'submit .abilityEventInput': function(e, tmpl) {
+    var self = this;
+    e.preventDefault();
+
+    /*
+     * Fetch form data
+     */
+    var inputs = [];
+    $(tmpl.find('input, textarea')).each(function (index, elem) {
+      if (elem.value) {
+        inputs.push(elem.value);
+      }
+    });
+
+    /*
+     * Make sure we have the right amount of data
+     */
+    if (inputs.length !== self.ability.input.length) {
+      alert('need all values plz');
+    }
+
+    Meteor.call('abilityEventInput',
                 Router.getData().game._id,
-                this._id,
+                self._id,
+                inputs,
                 function(err, res) {
                   console.log(err, res);
                 }

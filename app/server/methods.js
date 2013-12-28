@@ -65,14 +65,44 @@ Meteor.methods({
       createdAt: new Date()
     };
 
-    //TODO: ability.target
-
     Events.insert(gameEvent);
 
     return "Great success";
   },
 
-  'abilityEventInput': function(gameId, eventId) {
-    // do some magic
+  'abilityEventInput': function(gameId, eventId, inputs) {
+    var game = GetGameAndCheckPermission(gameId, Meteor.userId());
+    var gameEvent = GetEventAndCheckPermission(gameId, eventId, Meteor.userId());
+    var character = GetCharacterAndCheckPermission(gameId, gameEvent.character, Meteor.userId());
+    var ability = Abilities.findOne({name: gameEvent.ability});
+
+    // How do you pay to perform this ability?
+    if (ability.currency === "stamina") {
+      // Is the price variable?
+      if (ability.price === -1) {
+        // Find the first input demanding an amount, in stamina.
+        _.each(ability.input, function(input, i) {
+          if (input.type === "amount" && input.max === "stamina") {
+            paidPrice = inputs[i];
+          }
+
+        });
+      } else {
+        paidPrice = ability.price;
+      }
+    }
+
+    // TODO: Validate the input
+    // TODO: Draw the price
+
+    Events.update(gameEvent._id, {
+      $set: {
+        input: inputs,
+        paidPrice: paidPrice,
+        state: "completed"
+      }
+    });
+
+    return "Great success";
   }
 });

@@ -7,16 +7,22 @@
     <ul>
       {{#each activeEvents}}
         <li>
-          {{character.name}}:
-          {{ability.input.0.text}}
-          {{#if equals ability.input.0.type "amount"}}
-            <form class="eventInput">
-              1
-              <input type="range" min="1" max="{{character.getStamina}}">
-              {{character.getStamina}}
-              <input type="submit" value="move">
-            </form>
-          {{/if}}
+          {{character.name}}: {{ability.name}}
+          <form class="abilityEventInput">
+            {{#each ability.input}}
+                <p>{{text}}</p>
+
+                {{#if equals type "amount"}}
+                  <div>
+                    1
+                    <input type="range" min="1" max="{{../../character.getStamina}}">
+                    {{../../character.getStamina}}
+                  </div>
+                {{/if}}
+
+            {{/each}}
+            <input type="submit" value="move">
+          </form>
         </li>
       {{/each}}
     </ul>

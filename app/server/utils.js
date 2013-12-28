@@ -63,3 +63,31 @@ GetCharacterAndCheckPermission = function(gameId, characterId, userId) {
 
   return character;
 }
+
+GetEventAndCheckPermission = function(gameId, eventId, userId) {
+  var game = Games.findOne({_id: gameId});
+
+  if (!game) {
+    throw new Meteor.Error(404, "No such game");
+  }
+
+  var team = Teams.findOne({
+    owner: userId,
+    _id: {$in: game.teams}
+  });
+
+  if (!team) {
+    throw new Meteor.Error(403, "Permission denied, you're not part of this game.");
+  }
+
+  var gameEvent = Events.findOne({
+    game: game._id,
+    _id: eventId
+  });
+
+  if (!gameEvent) {
+    throw new Meteor.Error(404, "No such event");
+  }
+
+  return gameEvent;
+}

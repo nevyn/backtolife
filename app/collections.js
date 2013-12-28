@@ -5,6 +5,7 @@ Characters = new Meteor.Collection("characters", {
     /*
      * Methods for getting stats, derived from attributes
      */
+
     character.getHitPoints = function() {
       return attrs.strength * 100;
     }
@@ -22,6 +23,33 @@ Characters = new Meteor.Collection("characters", {
       return parseInt(stamina * 10, "10");
     }
 
+    /*
+     * Return the amounts for this specific game.
+     */
+    character.getState = function() {
+      var state = {};
+
+      if (character.state.hitPoints === -1) {
+        state.hitPoints = character.getHitPoints();
+      } else {
+        state.hitPoints = character.state.hitPoints;
+      }
+
+      if (character.state.mana === -1) {
+        state.mana = character.getMana();
+      } else {
+        state.mana = character.state.mana;
+      }
+
+      if (character.state.stamina === -1) {
+        state.stamina = character.getStamina();
+      } else {
+        state.stamina = character.state.stamina;
+      }
+
+      return state;
+    }
+
     character.getDamage = function() {
       var damage =
         (attrs.combat * 0.75) +
@@ -37,6 +65,7 @@ Characters = new Meteor.Collection("characters", {
 
       return parseInt(resistance * 10, "10");
     }
+
 
     return character;
   }

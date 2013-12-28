@@ -41,6 +41,19 @@ Meteor.methods({
       }
     });
 
+    /*
+     * Reset stamina after my turn
+     *
+     * TODO: Reset it slowly, not to full
+     */
+    Characters.update({
+      team: team._id
+    }, {
+      $set: {"state.stamina": -1}
+    }, {
+      multi: true
+    });
+
     return "Great success";
   },
   /*
@@ -52,6 +65,11 @@ Meteor.methods({
     var game = GetGameAndCheckPermission(gameId, Meteor.userId());
     var character = GetCharacterAndCheckPermission(gameId, characterId, Meteor.userId());
     var ability = Abilities.findOne({name: abilityName});
+    var team = GetTeamAndCheckPermission(gameId, Meteor.userId());
+
+    if (game.currentTurn !== team._id) {
+      throw new Meteor.Error(500, "Can't make a move - not your turn :)");
+    }
 
     if (!ability) {
       throw new Meteor.Error(500, "No such ability");
@@ -92,8 +110,21 @@ Meteor.methods({
       }
     }
 
+    // Draw the price from the character
+    if (character.getState()[ability.currency] < paidPrice) {
+      throw new Meteor.Error(500, "You can't afford this ability.");
+    } else {
+      var newStateValue = character.getState()[ability.currency] - paidPrice,
+          set = {};
+
+      set["state." + ability.currency] = newStateValue;
+
+      Characters.update(character._id, {
+        $set: set
+      });
+    }
+
     // TODO: Validate the input
-    // TODO: Draw the price
 
     Events.update(gameEvent._id, {
       $set: {

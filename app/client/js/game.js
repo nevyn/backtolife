@@ -1,15 +1,18 @@
 var helpers = {
   /*
-   * Check if the team in the current data context
-   * has it's turn.
+   * Check if the provided team, or the team in
+   * the current data context has it's turn.
    */
-  isItOurTurn: function() {
+  isItOurTurn: function(team) {
     var self = Router.getData();
+
+    if (!team) team = self._id;
 
     if (!self.game) return;
 
     return this._id === self.game.currentTurn;
   },
+  // TODO: refactor
   getCharacterName: function(characterId) {
     var c = Characters.findOne(characterId);
     return c && c.name;
@@ -22,6 +25,7 @@ var events = {
       console.log(err, res);
     });
   },
+  // Perform new ability
   'click .ability': function(e, tmpl) {
     Meteor.call('newAbilityEvent',
                 Router.getData().game._id,
@@ -33,6 +37,10 @@ var events = {
     );
   },
 
+  /*
+   * Submit the form with all inputs to finalize
+   * an ability event.
+   */
   'submit .abilityEventInput': function(e, tmpl) {
     var self = this;
     e.preventDefault();

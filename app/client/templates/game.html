@@ -52,9 +52,9 @@
     {{#each myCharacters}}
       <div class="character">
         <h3>{{name}}</h3>
-        <div>HP: {{getHitPoints}}</div>
-        <div>Mana: {{getMana}}</div>
-        <div>Stamina: {{getStamina}}</div>
+        <div>HP: {{getState.hitPoints}}/{{getHitPoints}}</div>
+        <div>Mana: {{getState.mana}}/{{getMana}}</div>
+        <div>Stamina: {{getState.stamina}}/{{getStamina}}</div>
         <div>Damage: {{getDamage}}</div>
         <div>Magic resistance: {{getMagicResistance}}</div>
         <ul>
@@ -62,12 +62,16 @@
             <li>{{key}}: {{value}}</li>
           {{/each}}
         </ul>
-        {{#each abilities}}
-          <button
-            class="ability"
-            data-ability="{{this}}"
-            data-character="{{../_id}}">{{this}}</button>
-        {{/each}}
+          {{#each abilities}}
+            {{#if isItOurTurn ../../myTeam._id}}
+              <button
+                class="ability"
+                data-ability="{{this}}"
+                data-character="{{../../_id}}">{{this}}</button>
+            {{else}}
+              <button disabled="disabled">{{this}}</button>
+            {{/if}}
+          {{/each}}
       </div>
     {{/each}}
     </div>

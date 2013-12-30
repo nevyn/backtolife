@@ -67,6 +67,16 @@ var events = {
                   console.log(err, res);
                 }
     );
+  },
+  'click .cancelAbilityEventInput': function() {
+    Meteor.call('cancelAbilityEventInput',
+                Router.getData().game._id,
+                this._id,
+                function(err, res) {
+                  console.log(err, res);
+                }
+    );
+
   }
 };
 

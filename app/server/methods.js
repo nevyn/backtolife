@@ -95,6 +95,13 @@ Meteor.methods({
     return "Great success";
   },
 
+  'cancelAbilityEventInput': function(gameId, eventId, inputs) {
+    var game = GetGameAndCheckPermission(gameId, Meteor.userId());
+    var gameEvent = GetEventAndCheckPermission(gameId, eventId, Meteor.userId());
+    var character = GetCharacterAndCheckPermission(gameId, gameEvent.character, Meteor.userId());
+
+    Events.remove(gameEvent._id);
+  },
   'abilityEventInput': function(gameId, eventId, inputs) {
     var game = GetGameAndCheckPermission(gameId, Meteor.userId());
     var gameEvent = GetEventAndCheckPermission(gameId, eventId, Meteor.userId());

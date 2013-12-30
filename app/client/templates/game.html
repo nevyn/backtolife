@@ -15,13 +15,16 @@
                 {{#if equals type "amount"}}
                   <div>
                     1
-                    <input type="range" min="1" max="{{../../character.getStamina}}">
-                    {{../../character.getStamina}}
+                    <input type="range" min="1" max="{{../../character.getState.stamina}}">
+                    {{../../character.getState.stamina}}
                   </div>
                 {{/if}}
 
             {{/each}}
-            <input type="submit" value="{{ability.name}}">
+            <p>
+              <input type="submit" value="{{ability.name}}">
+              <a href="#" class="cancelAbilityEventInput">cancel</a>
+            </p>
           </form>
         </li>
       {{/each}}

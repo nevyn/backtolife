@@ -1,21 +1,18 @@
 var helpers = {
-  /*
-   * Check if the provided team, or the team in
-   * the current data context has it's turn.
-   */
-  isItOurTurn: function(team) {
-    var self = Router.getData();
-
-    if (!team) team = this._id;
-
-    if (!self.game) return;
-
-    return team === self.game.currentTurn;
-  },
   // TODO: refactor
   getCharacterName: function(characterId) {
     var c = Characters.findOne(characterId);
     return c && c.name;
+  },
+  /*
+   * Characters can only perform abilities if it's their
+   * team's turn and they don't have any active events.
+   */
+  canPerformAbility: function(characterId) {
+    var data = Router.getData();
+    var hasActiveEvents = GetActiveEventsForCharacter(data.game._id, characterId).count();
+
+    return !hasActiveEvents && data.isItMyTurn;
   }
 };
 

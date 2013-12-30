@@ -33,7 +33,7 @@
       <ul>
         {{#each teams}}
           <li>{{name}}
-            {{#if isItOurTurn _id}}
+            {{#if equals ../game.currentTurn _id}}
               (TURN)
             {{/if}}
           </li>
@@ -41,11 +41,9 @@
       </ul>
     </div>
     <div>
-      {{#with myTeam}}
-        {{#if isItOurTurn _id}}
-          <button id="end-turn">End turn</button>
-        {{/if}}
-      {{/with}}
+      {{#if isItMyTurn}}
+        <button id="end-turn">End turn</button>
+      {{/if}}
     </div>
 
     <div>
@@ -63,7 +61,7 @@
           {{/each}}
         </ul>
           {{#each abilities}}
-            {{#if isItOurTurn ../../myTeam._id}}
+            {{#if canPerformAbility ../_id}}
               <button
                 class="ability"
                 data-ability="{{this}}"
@@ -75,7 +73,6 @@
       </div>
     {{/each}}
     </div>
-
 
     <h2 class="clear">History</h2>
     <ul>

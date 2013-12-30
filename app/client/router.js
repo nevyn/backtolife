@@ -57,13 +57,14 @@ Router.map(function () {
         teams: Teams.find(),
         myTeam: myTeam,
         game: game,
-        characters: Characters.find(),
         abilities: Abilities.find(),
         history: Events.find({
             state: "completed"
           }),
         activeEvents: activeEvents,
-        myCharacters: Characters.find({team: myTeam._id})
+        characters: Characters.find(),
+        myCharacters: Characters.find({team: myTeam._id}),
+        isItMyTurn: myTeam._id === game.currentTurn
       };
     }
   });

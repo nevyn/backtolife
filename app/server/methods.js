@@ -75,6 +75,13 @@ Meteor.methods({
       throw new Meteor.Error(500, "No such ability");
     }
 
+    /*
+     * Prevent multiple active events
+     */
+    if (GetActiveEventsForCharacter(gameId, character._id).count()) {
+      throw new Meteor.Error(500, "Can't perform another event with this character. Finalize the other event first.");
+    }
+
     var gameEvent = {
       ability: ability.name,
       state: "started",

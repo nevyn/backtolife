@@ -5,14 +5,35 @@ var helpers = {
     return c && c.name;
   },
   /*
-   * Characters can only perform abilities if it's their
-   * team's turn and they don't have any active events.
+   * Characters can only perform abilities if:
+   * - it's their team's turn,
+   * - they don't have any active events,
+   * - they can afford the price of the ability.
    */
   canPerformAbility: function(characterId) {
     var data = Router.getData();
     var hasActiveEvents = GetActiveEventsForCharacter(data.game._id, characterId).count();
+    var ability = Abilities.findOne({name: this.toString()});
+    var character = Characters.findOne(characterId);
 
-    return !hasActiveEvents && data.isItMyTurn;
+    /*
+     * Determine if we can afford the ability.
+     *
+     * -1 means variable price, which we can always
+     *  allow unless we have 0 in the given currency.
+     */
+    if (ability.price === -1) {
+      if (character.getState()[ability.currency] === 0) {
+        var canAfford = false;
+      } else {
+        var canAfford = true;
+      }
+    // If it's not variable, check regularly if we can afford it
+    } else {
+      var canAfford = character.getState()[ability.currency] > ability.price;
+    }
+
+    return !hasActiveEvents && data.isItMyTurn && canAfford;
   }
 };
 
@@ -46,7 +67,7 @@ var events = {
      * Fetch form data
      */
     var inputs = [];
-    $(tmpl.find('input[type=text], input[type=radio]:checked, textarea')).each(function (index, el) {
+    $(tmpl.find('input[type=text], input[type=radio]:checked, input[type=range], textarea')).each(function (index, el) {
       if (el.value) {
         inputs.push(el.value);
       }

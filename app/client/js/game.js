@@ -46,9 +46,9 @@ var events = {
      * Fetch form data
      */
     var inputs = [];
-    $(tmpl.find('input, textarea')).each(function (index, elem) {
-      if (elem.value) {
-        inputs.push(elem.value);
+    $(tmpl.find('input[type=text], input[type=radio]:checked, textarea')).each(function (index, el) {
+      if (el.value) {
+        inputs.push(el.value);
       }
     });
 

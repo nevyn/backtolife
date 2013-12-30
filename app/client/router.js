@@ -64,6 +64,7 @@ Router.map(function () {
         activeEvents: activeEvents,
         characters: Characters.find(),
         myCharacters: Characters.find({team: myTeam._id}),
+        opponentsCharacters: Characters.find({team: {$ne: myTeam._id}}),
         isItMyTurn: myTeam._id === game.currentTurn
       };
     }

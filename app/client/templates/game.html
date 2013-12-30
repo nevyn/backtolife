@@ -19,6 +19,13 @@
                     {{../../character.getState.stamina}}
                   </div>
                 {{/if}}
+                {{#if equals type "opponent"}}
+                  {{#each ../../../opponentsCharacters}}
+                    <div>
+                      <input type="radio" name="opponent" value="{{_id}}"> {{name}}
+                    </div>
+                  {{/each}}
+                {{/if}}
 
             {{/each}}
             <p>

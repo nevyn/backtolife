@@ -94,7 +94,6 @@ Meteor.methods({
 
     return "Great success";
   },
-
   'cancelAbilityEventInput': function(gameId, eventId, inputs) {
     var game = GetGameAndCheckPermission(gameId, Meteor.userId());
     var gameEvent = GetEventAndCheckPermission(gameId, eventId, Meteor.userId());
@@ -117,7 +116,6 @@ Meteor.methods({
           if (input.type === "amount" && input.max === "stamina") {
             paidPrice = inputs[i];
           }
-
         });
       } else {
         paidPrice = ability.price;
@@ -138,8 +136,31 @@ Meteor.methods({
       });
     }
 
-    // TODO: Validate the input
+    // What's the outcome of the ability?
+    _.each(ability.output, function (output) {
+      if (output.type === "damage") {
+        // Find the first input demanding an opponent
+        _.each(ability.input, function(input, i) {
+          if (input.type === "opponent") {
+            // TODO: validate the character being part of the game
+            // TODO: handle death :D
+            var targetOpponent = Characters.findOne(inputs[i]),
+                newHitPoints = targetOpponent.getState().hitPoints -
+                                character.getDamage();
 
+            Characters.update(targetOpponent._id, {
+              $set: {
+                "state.hitPoints": newHitPoints
+              }
+            });
+
+            return false;
+          }
+        });
+      }
+    });
+
+    // TODO: Validate the input
     Events.update(gameEvent._id, {
       $set: {
         input: inputs,

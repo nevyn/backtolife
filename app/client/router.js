@@ -15,7 +15,6 @@ Router.map(function () {
         games: Games.find()
       }
     }
-
   });
 
   this.route('game', {

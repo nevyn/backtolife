@@ -33,7 +33,7 @@
       <ul>
         {{#each teams}}
           <li>{{name}}
-            {{#if isItOurTurn}}
+            {{#if isItOurTurn _id}}
               (TURN)
             {{/if}}
           </li>
@@ -42,7 +42,7 @@
     </div>
     <div>
       {{#with myTeam}}
-        {{#if isItOurTurn}}
+        {{#if isItOurTurn _id}}
           <button id="end-turn">End turn</button>
         {{/if}}
       {{/with}}

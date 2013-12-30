@@ -6,11 +6,11 @@ var helpers = {
   isItOurTurn: function(team) {
     var self = Router.getData();
 
-    if (!team) team = self._id;
+    if (!team) team = this._id;
 
     if (!self.game) return;
 
-    return this._id === self.game.currentTurn;
+    return team === self.game.currentTurn;
   },
   // TODO: refactor
   getCharacterName: function(characterId) {

@@ -60,7 +60,11 @@ Router.map(function () {
         abilities: Abilities.find(),
         history: Events.find({
             state: "completed"
-          }),
+        }, {
+          sort: {
+            createdAt: -1
+          }
+        }),
         activeEvents: activeEvents,
         characters: Characters.find(),
         myCharacters: Characters.find({team: myTeam._id}),

@@ -9,24 +9,23 @@
         <li>
           {{character.name}}: {{ability.name}}
           <form class="abilityEventInput">
-            {{#each ability.input}}
-                <p>{{text}}</p>
+            {{#each currentPhase.inputs}}
+              <p>{{text}}</p>
 
-                {{#if equals type "amount"}}
+              {{#if equals type "amount"}}
+                <div>
+                  1
+                  <input type="range" min="1" max="{{../../character.getState.stamina}}">
+                  {{../../character.getState.stamina}}
+                </div>
+              {{/if}}
+              {{#if equals type "target-opponent"}}
+                {{#each ../../../opponentsCharacters}}
                   <div>
-                    1
-                    <input type="range" min="1" max="{{../../character.getState.stamina}}">
-                    {{../../character.getState.stamina}}
+                    <input type="radio" name="opponent" value="{{_id}}"> {{name}}
                   </div>
-                {{/if}}
-                {{#if equals type "opponent"}}
-                  {{#each ../../../opponentsCharacters}}
-                    <div>
-                      <input type="radio" name="opponent" value="{{_id}}"> {{name}}
-                    </div>
-                  {{/each}}
-                {{/if}}
-
+                {{/each}}
+              {{/if}}
             {{/each}}
             <p>
               <input type="submit" value="{{ability.name}}">

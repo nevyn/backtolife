@@ -87,6 +87,8 @@ Meteor.methods({
       state: "started",
       character: character._id,
       game: game._id,
+      paidPrice: null,
+      inputs: [],
       createdAt: new Date()
     };
 
@@ -101,73 +103,99 @@ Meteor.methods({
 
     Events.remove(gameEvent._id);
   },
-  'abilityEventInput': function(gameId, eventId, inputs) {
+  'abilityEventInput': function(gameId, eventId, currentPhaseInputs) {
     var game = GetGameAndCheckPermission(gameId, Meteor.userId());
     var gameEvent = GetEventAndCheckPermission(gameId, eventId, Meteor.userId());
     var character = GetCharacterAndCheckPermission(gameId, gameEvent.character, Meteor.userId());
     var ability = Abilities.findOne({name: gameEvent.ability});
 
-    // How do you pay to perform this ability?
-    if (ability.currency === "stamina") {
-      // Is the price variable?
-      if (ability.price === -1) {
-        // Find the first input demanding an amount, in stamina.
-        _.each(ability.input, function(input, i) {
-          if (input.type === "amount" && input.max === "stamina") {
-            paidPrice = inputs[i];
-          }
-        });
+    /*
+     * Has the event already been paid for?
+     *
+     * Abilities can be paid for with stamina or mana.
+     * Paying is part of the input method because some abilities
+     * have variable pricing based on input (e.g the Move ability
+     * depends on how far you walk).
+     *
+     */
+    if (!gameEvent.paidPrice) {
+      // How do you pay to perform this ability?
+      if (ability.currency === "stamina") {
+        // Is the price variable?
+        if (ability.price === -1) {
+          // Find the first input demanding an amount, in stamina.
+          _.each(ability.input, function(input, i) {
+            if (input.type === "amount" && input.max === "stamina") {
+              paidPrice = currentPhaseInputs[i];
+            }
+          });
+        } else {
+          paidPrice = ability.price;
+        }
+      }
+
+      // Draw the price from the character
+      if (character.getState()[ability.currency] < paidPrice) {
+        throw new Meteor.Error(500, "You can't afford this ability.");
       } else {
-        paidPrice = ability.price;
-      }
-    }
+        var newStateValue = character.getState()[ability.currency] - paidPrice,
+            set = {};
 
-    // Draw the price from the character
-    if (character.getState()[ability.currency] < paidPrice) {
-      throw new Meteor.Error(500, "You can't afford this ability.");
-    } else {
-      var newStateValue = character.getState()[ability.currency] - paidPrice,
-          set = {};
+        set["state." + ability.currency] = newStateValue;
 
-      set["state." + ability.currency] = newStateValue;
+        Characters.update(character._id, {
+          $set: set
+        });
 
-      Characters.update(character._id, {
-        $set: set
-      });
-    }
-
-    // What's the outcome of the ability?
-    _.each(ability.output, function (output) {
-      if (output.type === "damage") {
-        // Find the first input demanding an opponent
-        _.each(ability.input, function(input, i) {
-          if (input.type === "opponent") {
-            // TODO: validate the character being part of the game
-            // TODO: handle death :D
-            var targetOpponent = Characters.findOne(inputs[i]),
-                newHitPoints = targetOpponent.getState().hitPoints -
-                                character.getDamage();
-
-            Characters.update(targetOpponent._id, {
-              $set: {
-                "state.hitPoints": newHitPoints
-              }
-            });
-
-            return false;
+        Events.update(gameEvent._id, {
+          $set: {
+            paidPrice: paidPrice,
           }
         });
       }
-    });
+    }
 
-    // TODO: Validate the input
-    Events.update(gameEvent._id, {
-      $set: {
-        input: inputs,
-        paidPrice: paidPrice,
-        state: "completed"
-      }
-    });
+    if (currentPhaseInputs) {
+      // Handle the input
+      _.each(currentPhaseInputs, function(input) {
+
+      });
+
+      Events.update(gameEvent._id, {
+        $addToSet: {
+          inputs: currentPhaseInputs
+        }
+      });
+
+    } else {
+      throw new Meteor.Error(500, "No input provided.");
+    }
+
+    /*
+      // What's the outcome of the ability?
+      _.each(ability.output, function (output) {
+        if (output.type === "damage") {
+          // Find the first input demanding an opponent
+          _.each(ability.input, function(input, i) {
+            if (input.type === "opponent") {
+              // TODO: validate the character being part of the game
+              // TODO: handle death :D
+              var targetOpponent = Characters.findOne(inputs[i]),
+                  newHitPoints = targetOpponent.getState().hitPoints -
+                                  character.getDamage();
+
+              Characters.update(targetOpponent._id, {
+                $set: {
+                  "state.hitPoints": newHitPoints
+                }
+              });
+
+              return false;
+            }
+          });
+        }
+      });
+    */
 
     return "Great success";
   }

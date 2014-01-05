@@ -30,6 +30,14 @@ Meteor.publish('games', function() {
   });
 });
 
+Meteor.publish('teams', function() {
+  if (!this.userId) return;
+
+  // Publish all teams by this owner
+  return Teams.find({owner: this.userId});
+});
+
+
 Meteor.publish('events', function(gameId) {
   if (!gameId) return;
 

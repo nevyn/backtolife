@@ -4,7 +4,14 @@
   <h2>My teams</h2>
   <ul>
     {{#each teams}}
-      <li>{{name}}</li>
+      <li>
+	{{name}}
+	<ul>
+	  {{#each getCharacters}}
+            <li>{{name}}</li>
+	  {{/each}}
+	</ul>
+      </li>
     {{/each}}
   </ul>
 

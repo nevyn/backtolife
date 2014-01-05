@@ -1,4 +1,13 @@
-Teams = new Meteor.Collection("teams");
+Teams = new Meteor.Collection("teams",{
+  transform: function(team) {
+    team.getCharacters = function() {
+      return Characters.find({team: team._id});
+    };
+
+    return team;
+  }
+});
+
 Characters = new Meteor.Collection("characters", {
   transform: function (character) {
     var attrs = character.attributes;

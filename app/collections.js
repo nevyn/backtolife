@@ -1,4 +1,5 @@
 Teams = new Meteor.Collection("teams");
+
 Characters = new Meteor.Collection("characters", {
   transform: function (character) {
     var attrs = character.attributes;
@@ -96,4 +97,20 @@ Games = new Meteor.Collection("games", {
 });
 
 Abilities = new Meteor.Collection("abilities");
-Events = new Meteor.Collection("events");
+Events = new Meteor.Collection("events", {
+  transform: function(e) {
+    // TODO: Move to transform
+    e.ability = Abilities.findOne({name: e.ability});
+    e.character = Characters.findOne({_id: e.character});
+
+    /*
+     * Check which phase we're in on this event
+     */
+    var prevReceivedInputs = e.inputs.length;
+    e.currentPhaseDefinition = e.ability.phases[prevReceivedInputs];
+    e.currentPhaseNr = prevReceivedInputs + 1;
+
+    return e;
+  }
+
+});

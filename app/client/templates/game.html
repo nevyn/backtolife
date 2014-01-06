@@ -9,10 +9,10 @@
         <li>
           {{character.name}}: {{ability.name}}
           <form class="abilityEventInput">
-            {{#each currentPhase.inputs}}
+            {{#each currentPhaseDefinition.inputs}}
               <p>{{text}}</p>
 
-              {{#if equals type "amount"}}
+              {{#if equals type "price"}}
                 <div>
                   1
                   <input type="range" min="1" max="{{../../character.getState.stamina}}">

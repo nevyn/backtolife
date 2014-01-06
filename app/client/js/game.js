@@ -76,7 +76,7 @@ var events = {
     /*
      * Make sure we have the right amount of data
      */
-    if (inputs.length !== self.currentPhase.inputs.length) {
+    if (inputs.length !== self.currentPhaseDefinition.inputs.length) {
       alert('need all values plz');
     }
 

@@ -47,32 +47,17 @@ Router.map(function () {
           })
         }
       }).map(function (e) {
-        // TODO: Move to transform
-        e.ability = Abilities.findOne({name: e.ability});
-        e.character = Characters.findOne({_id: e.character});
-
         /*
-         * Determine which phase we're in by checking
-         * how much input has already been received
-         * in this event.
-         */
-        var receivedInputs = e.inputs.length;
-        var nextPhase = e.ability.phases[receivedInputs];
-
-        /*
-         * Decide if we are the one to give the input.
-         *
-         * TODO: Handle if we're not.
-         */
-        if (nextPhase.character === "originator") {
-          e.currentPhase = nextPhase;
+         * TODO: Decide if we are the one to give the input.
+        if (!e.currentPhaseDefinition.character === "originator") {
         }
+        */
 
         /*
          * If the current input phase has any dice rolls, determine the
          * probability of making it.
          */
-        _.each(e.currentPhase.inputs, function (input) {
+        _.each(e.currentPhaseDefinition.inputs, function (input) {
           if (input.type === "probability") {
             if (!input.chance) return;
 

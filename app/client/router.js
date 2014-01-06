@@ -61,10 +61,69 @@ Router.map(function () {
 
         /*
          * Decide if we are the one to give the input.
+         *
+         * TODO: Handle if we're not.
          */
         if (nextPhase.character === "originator") {
           e.currentPhase = nextPhase;
         }
+
+        /*
+         * If the current input phase has any dice rolls, determine the
+         * probability of making it.
+         */
+        _.each(e.currentPhase.inputs, function (input) {
+          if (input.type === "probability") {
+            if (!input.chance) return;
+
+            // Base chance
+            var chance = input.chance;
+
+            /*
+             * Modifiers - the things that change the base chance
+             * of making the roll. These are normally attributes of the
+             * originating or target character.
+             *
+             * For example, if the "Attack" ability has a 50% base chance
+             * of hitting, and the modifier is "combat", the chance of hitting
+             * willing be 50 + the attacker's combat skill.
+             */
+            if (input.modifiers) {
+              _.each(input.modifiers, function (modifier) {
+                /*
+                 * Check if the modifier is a character attribute, such as
+                 * "combat", "strength", etc
+                 */
+                if (_.has(e.character.attributes, modifier.type)) {
+                  var modifyBy = e.character.attributes[modifier.type];
+                } else if (modifier.type === "magic-resistance") {
+                  var modifyBy = e.character.getMagicResistance();
+                } else if (modifier.type === "damage") {
+                  var modifyBy = e.character.getDamage();
+                }
+
+                /*
+                 * The modifier can either boost or decrease your
+                 * chances of making the roll.
+                 */
+                if (modifier.character === "originator") {
+                  chance = chance + modifyBy;
+                } else {
+                  chance = chance - modifyBy;
+                }
+              });
+
+              /*
+               * Since the dice are two d6, convert the chance (in percentage)
+               * into a number from 1 to 12.
+               */
+              chance = 12 - Math.floor(chance * 1.2 / 10);
+
+              input.diceRoll = chance;
+            }
+          }
+        });
+
         // TODO: if (nextPhase.character === "")
 
         return e;

@@ -19,6 +19,16 @@
                   {{../../character.getState.stamina}}
                 </div>
               {{/if}}
+              {{#if equals type "probability"}}
+                <p>Roll {{diceRoll}}+ on two dice.</p>
+                <small>That means you need to roll at least {{diceRoll}} or more on two standard d6 dice to make it.</small>
+                <p>
+                  <input type="radio" name="dice-roll-result" value="success"> I made it
+                </p>
+                <p>
+                  <input type="radio" name="dice-roll-result" value="failure"> I didn't make it
+                </p>
+              {{/if}}
               {{#if equals type "target-opponent"}}
                 {{#each ../../../opponentsCharacters}}
                   <div>
@@ -28,7 +38,7 @@
               {{/if}}
             {{/each}}
             <p>
-              <input type="submit" value="{{ability.name}}">
+              <input type="submit" value="Submit">
               <a href="#" class="cancelAbilityEventInput">cancel</a>
             </p>
           </form>

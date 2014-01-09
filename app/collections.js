@@ -1,7 +1,13 @@
 Teams = new Meteor.Collection("teams",{
   transform: function(team) {
     team.getCharacters = function() {
-      return Characters.find({team: team._id});
+      return Characters.find({team: team._id}).fetch();
+    };
+
+    team.getCharactersIds = function() {
+      return Characters.find({team: team._id}).map(function (character) {
+        return character._id;
+      });
     };
 
     return team;
@@ -110,6 +116,7 @@ Events = new Meteor.Collection("events", {
     // TODO: Move to transform
     e.ability = Abilities.findOne({name: e.ability});
     e.character = Characters.findOne({_id: e.character});
+    e.targets = Characters.find({_id: {$in: e.targets}}).fetch();
 
     /*
      * Check which phase we're in on this event

@@ -7,41 +7,46 @@
     <ul>
       {{#each activeEvents}}
         <li>
-          {{character.name}}: {{ability.name}}
-          <form class="abilityEventInput">
-            {{#each currentPhaseDefinition.inputs}}
-              <p>{{text}}</p>
+          {{ability.name}} by {{character.name}}
+          {{#if ourTurn}}
+            <form class="abilityEventInput">
+              {{#each currentPhaseDefinition.inputs}}
+                <p>{{text}}</p>
 
-              {{#if equals type "price"}}
-                <div>
-                  1
-                  <input type="range" min="1" max="{{../../character.getState.stamina}}">
-                  {{../../character.getState.stamina}}
-                </div>
-              {{/if}}
-              {{#if equals type "probability"}}
-                <p>Roll {{diceRoll}}+ on two dice.</p>
-                <small>That means you need to roll at least {{diceRoll}} or more on two standard d6 dice to make it.</small>
-                <p>
-                  <input type="radio" name="dice-roll-result" value="success"> I made it
-                </p>
-                <p>
-                  <input type="radio" name="dice-roll-result" value="failure"> I didn't make it
-                </p>
-              {{/if}}
-              {{#if equals type "target-opponent"}}
-                {{#each ../../../opponentsCharacters}}
+                {{#if equals type "price"}}
                   <div>
-                    <input type="radio" name="opponent" value="{{_id}}"> {{name}}
+                    1
+                    <input type="range" min="1" max="{{../../character.getState.stamina}}">
+                    {{../../character.getState.stamina}}
                   </div>
-                {{/each}}
-              {{/if}}
-            {{/each}}
-            <p>
-              <input type="submit" value="Submit">
-              <a href="#" class="cancelAbilityEventInput">cancel</a>
-            </p>
-          </form>
+                {{/if}}
+                {{#if equals type "probability"}}
+                  <p>Roll {{diceRoll}}+ on two dice.</p>
+                  <small>That means you need to roll at least {{diceRoll}} or more on two standard d6 dice to make it.</small>
+                  <p>
+                    <input type="radio" name="dice-roll-result" value="success"> I made it
+                  </p>
+                  <p>
+                    <input type="radio" name="dice-roll-result" value="failure"> I didn't make it
+                  </p>
+                {{/if}}
+                {{#if equals type "target-opponent"}}
+                  {{#each ../../../../opponentsCharacters}}
+                    <div>
+                      <input type="radio" name="opponent" value="{{_id}}"> {{name}}
+                    </div>
+                  {{/each}}
+                {{/if}}
+              {{/each}}
+              <p>
+                <input type="submit" value="Submit">
+                <a href="#" class="cancelAbilityEventInput">cancel</a>
+              </p>
+            </form>
+          {{else}}
+            <p>Waiting for: {{#each ../opponents}}{{name}}{{/each}}</p>
+
+          {{/if}}
         </li>
       {{/each}}
     </ul>
@@ -80,14 +85,16 @@
           {{/each}}
         </ul>
           {{#each abilities}}
-            {{#if canPerformAbility ../_id}}
-              <button
-                class="ability"
-                data-ability="{{this}}"
-                data-character="{{../../_id}}">{{this}}</button>
-            {{else}}
-              <button disabled="disabled">{{this}}</button>
-            {{/if}}
+            <div>
+              {{#if canPerformAbility ../_id}}
+                <button
+                  class="ability"
+                  data-ability="{{this}}"
+                  data-character="{{../../_id}}">{{this}}</button>
+              {{else}}
+                <button disabled="disabled">{{this}}</button>
+              {{/if}}
+            </div>
           {{/each}}
       </div>
     {{/each}}
@@ -97,9 +104,9 @@
     <ul>
       {{#each history}}
         <li>
-          {{getCharacterName character}}:
+          {{character.name}}:
           {{state}}
-          {{ability}}
+          {{ability.name}}
         </li>
       {{/each}}
     </ul>

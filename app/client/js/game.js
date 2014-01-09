@@ -1,9 +1,4 @@
 var helpers = {
-  // TODO: refactor
-  getCharacterName: function(characterId) {
-    var c = Characters.findOne(characterId);
-    return c && c.name;
-  },
   /*
    * Characters can only perform abilities if:
    * - it's their team's turn,

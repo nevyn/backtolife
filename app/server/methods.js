@@ -67,6 +67,8 @@ Meteor.methods({
     var ability = Abilities.findOne({name: abilityName});
     var team = GetTeamAndCheckPermission(gameId, Meteor.userId());
 
+    var paidPrice;
+
     if (game.currentTurn !== team._id) {
       throw new Meteor.Error(500, "Can't make a move - not your turn :)");
     }
@@ -95,7 +97,11 @@ Meteor.methods({
         Characters.update(character._id, {
           $set: set
         });
+
+        paidPrice = ability.price;
       }
+    } else {
+      paidPrice: null;
     }
 
     var e = {
@@ -103,8 +109,9 @@ Meteor.methods({
       state: "started",
       character: character._id,
       game: game._id,
-      paidPrice: ability.price,
+      paidPrice: paidPrice,
       inputs: [],
+      targets: [],
       createdAt: new Date()
     };
 
@@ -117,17 +124,15 @@ Meteor.methods({
     var e = GetEventAndCheckPermission(gameId, eventId, Meteor.userId());
     var character = GetCharacterAndCheckPermission(gameId, e.character._id, Meteor.userId());
 
+    // TODO: Give back price if cancelling
+
     Events.remove(e._id);
   },
   'abilityEventInput': function(gameId, eventId, providedInput) {
     var game = GetGameAndCheckPermission(gameId, Meteor.userId());
     var e = GetEventAndCheckPermission(gameId, eventId, Meteor.userId());
 
-    // TODO: These are available on the e instance. Get rid of them but solve
-    // permission checking in some other way.
-    console.log(e.character._id);
-    var character = GetCharacterAndCheckPermission(gameId, e.character._id, Meteor.userId());
-    var ability = Abilities.findOne({name: e.ability.name});
+    // TODO: Check permissions for e.character
 
     /*
      * Make sure we've got the amount of input we need
@@ -136,18 +141,31 @@ Meteor.methods({
       throw new Meteor.Error(500, "No input provided.");
     }
 
+
     /*
      * Okay, we've got the input, let's loop it through and handle it
      */
     _.each(e.currentPhaseDefinition.inputs, function (input, index) {
       if (input.type === "probability") {
-        var rollOutcome = providedInput[index];
-        if (rollOutcome === "success") {
-          // Great, carry on
-          return;
-        } else {
-          return false;
+        var cancelThisEvent,
+            rollWasSuccessful = providedInput[index] === "success" ? true : false;
 
+        /*
+         * Rolls can either be good for the event, or bad for the event.
+         *
+         * In the case of an Attack, rolling to hit and rolling to defend
+         * has inversed effects on the event in the case of a successful
+         * dice roll.
+         */
+        if (input.ifSuccessful === "continue") {
+          cancelThisEvent = rollWasSuccessful ? false : true;
+        } else if (input.ifSuccessful === "cancel") {
+          cancelThisEvent = rollWasSuccessful ? true : false;
+        } else {
+          throw new Meteor.Error(500, "This dice roll has no success statement.");
+        }
+
+        if (cancelThisEvent) {
           /*
            * Event failed, stop processing inputs
            * and flag it as "completed"
@@ -158,35 +176,55 @@ Meteor.methods({
               state: "completed"
             }
           });
+        } else {
+          // Great, carry on.
+          return;
         }
       } else if (input.type === "target-opponent") {
-        // TODO: Check that the opponent is part of the game
-        // TODO: Add the opponent into 'targets' on the event
+        var targetId = providedInput[index];
 
+        /*
+         * Check that target is part of the game
+         */
+        var target = Characters.findOne({
+          _id: targetId,
+            team: {
+              $in: game.teams
+            }
+        });
+
+        if (!target) {
+          throw new Meteor.Error(500, "Can't finish ability: Invalid target.")
+        } else {
+          Events.update(e._id, {
+            $addToSet: {
+              targets: target._id
+            }
+          });
+        }
       /*
        * Some abilities have variable pricing and need a price input,
        * in stamina or mana.
        */
       } else if (input.type === "price") {
-        var price = providedInput[i];
-        check(price, Number);
+        var price = parseInt(providedInput[index]);
 
         if (e.paidPrice) {
           throw new Meteor.Error(500, "A price was provided but the event has already been paid for.");
-        } else if (ability.price !== -1) {
+        } else if (e.ability.price !== -1) {
           throw new Meteor.Error(500, "A price was provided but the event does not have variable pricing.");
         }
 
         // Draw the price from the character
-        if (character.getState()[ability.currency] < price) {
+        if (e.character.getState()[e.ability.currency] < price) {
           throw new Meteor.Error(500, "You can't afford this ability.");
         } else {
-          var newStateValue = character.getState()[ability.currency] - price,
+          var newStateValue = e.character.getState()[e.ability.currency] - price,
               set = {};
 
-          set["state." + ability.currency] = newStateValue;
+          set["state." + e.ability.currency] = newStateValue;
 
-          Characters.update(character._id, {
+          Characters.update(e.character._id, {
             $set: set
           });
 
@@ -202,6 +240,10 @@ Meteor.methods({
     // Re-fetch game instance after updates
     var e = GetEventAndCheckPermission(gameId, eventId, Meteor.userId());
     var isLastPhase = e.ability.phases.length === e.inputs.length + 1;
+
+    if (e.result === "failure") {
+      return "Event failed";
+    }
 
     if (!isLastPhase) {
       /*
@@ -221,10 +263,10 @@ Meteor.methods({
       /*
        * What's the outcome of the ability?
        */
-      _.each(ability.output, function (output) {
+      _.each(e.ability.output, function (output) {
         if (output.type === "damage") {
           _.each(e.targets, function(target) {
-            var targetChar = Characters.findOne(target);
+            var targetChar = Characters.findOne(target._id);
             newHitPoints = targetChar.getState().hitPoints -
                             e.character.getDamage();
 
@@ -236,6 +278,7 @@ Meteor.methods({
           });
         }
       });
+
 
       /*
        * Okay, we're done!
@@ -249,9 +292,10 @@ Meteor.methods({
           state: "completed"
         }
       });
+      return "Great success, event is done.";
     } else {
     }
 
-    return "Great success";
+    return "Input provided successfully";
   }
 });

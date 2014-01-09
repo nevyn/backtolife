@@ -4,8 +4,8 @@ Router.map(function () {
 
     waitOn: function() {
       return [
-        Meteor.subscribe('teams'),
-        Meteor.subscribe('games')
+        Meteor.subscribe('games'),
+        Meteor.subscribe('teams-and-characters')
       ];
     },
 

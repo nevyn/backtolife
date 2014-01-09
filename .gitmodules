@@ -1,3 +1,3 @@
 [submodule "app/packages/iron-router"]
 	path = app/packages/iron-router
-	url = git@github.com:EventedMind/iron-router.git
+	url = https://github.com/EventedMind/iron-router.git

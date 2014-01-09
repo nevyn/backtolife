@@ -1,9 +1,16 @@
 Meteor.publish('teams-and-characters', function(gameId) {
   if (!this.userId) return;
 
-  // Always publish our own teams
-  if (!gameId)
-    return Teams.find({owner: this.userId});
+  if (!gameId) {
+    return [Teams.find({owner: this.userId}),
+	    Characters.find({
+	      team: {
+		$in: Teams.find({owner: this.userId}).map(function(t) {
+		  return t._id
+		})
+	      }
+	    })];
+  }
 
   /*
    * Allow people in a game to access
@@ -24,7 +31,7 @@ Meteor.publish('games', function() {
   return Games.find({
     teams: {
       $in: Teams.find({owner: this.userId}).map(function(t) {
-        return t._id
+        return t._id;
       })
     }
   });

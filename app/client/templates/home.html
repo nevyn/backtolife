@@ -1,11 +1,11 @@
 <template name="home">
-  <h1>Welcome to Back to Life.</h1>
+  <h1>Welcome Back to Life.</h1>
 
   <h2>My teams</h2>
   <ul>
     {{#each teams}}
       <li>
-	{{name}}
+	{{name}}: {{descr}}
 	<ul>
 	  {{#each getCharacters}}
             <li>{{name}}</li>
@@ -15,6 +15,18 @@
     {{/each}}
   </ul>
 
+  {{#if currentUser}}
+    <div class="addTeam">
+      <div class="teamName">
+        name: <input type="text" id="team" />
+      </div>
+      <div class="teamDescription">
+        description: <textarea id="description"></textarea>
+      </div>
+      <input type="button" class="add" value="Add team" />
+    </div>
+  {{/if}}
+  
   <h2>My games</h2>
   <ul>
     {{#each games}}

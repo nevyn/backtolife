@@ -11,6 +11,8 @@ var helpers = {
     var ability = Abilities.findOne({name: this.toString()});
     var character = Characters.findOne(characterId);
 
+    if (!ability) return false;
+
     /*
      * Determine if we can afford the ability.
      *
@@ -25,7 +27,7 @@ var helpers = {
       }
     // If it's not variable, check regularly if we can afford it
     } else {
-      var canAfford = character.getState()[ability.currency] > ability.price;
+      var canAfford = character.getState()[ability.currency] >= ability.price;
     }
 
     return !hasActiveEvents && data.isItMyTurn && canAfford;

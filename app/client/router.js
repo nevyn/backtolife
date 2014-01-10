@@ -97,6 +97,9 @@ Router.map(function () {
                   /*
                    * Check if the modifier is a character attribute, such as
                    * "combat", "strength", etc
+                   *
+                   * TODO: Don't always get these values from the originator,
+                   * sometimes the modifier wants the targets stats :)
                    */
                   if (_.has(e.character.attributes, modifier.type)) {
                     var modifyBy = e.character.attributes[modifier.type];
@@ -107,13 +110,15 @@ Router.map(function () {
                   }
 
                   /*
-                   * The modifier can either boost or decrease your
+                   * The modifier can either increase or decrease your
                    * chances of making the roll.
                    */
-                  if (modifier.character === "originator") {
+                  if (modifier.result === "increase") {
                     chance = chance + modifyBy;
-                  } else {
+                  } else if (modifier.result === "decrease") {
                     chance = chance - modifyBy;
+                  } else {
+                    throw new Meteor.Error(500, "Ability implemented improperly - modifier needs a 'result' key.");
                   }
                 });
 
@@ -122,6 +127,19 @@ Router.map(function () {
                  * into a number from 1 to 12.
                  */
                 chance = 12 - Math.floor(chance * 1.2 / 10);
+
+                /*
+                 * The best die roll is always 2+, meaning you can
+                 * always fuck up, no matter how good you are.
+                 *
+                 * The worst die roll is always 12+, meaning you can
+                 * always m ake it, no matter how bad you are.
+                 */
+                if (chance < 2) {
+                  chance = 2;
+                } else if (chance > 12) {
+                  chance = 12;
+                }
 
                 input.diceRoll = chance;
               }

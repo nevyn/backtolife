@@ -78,7 +78,7 @@ Characters = new Meteor.Collection("characters", {
         (attrs.agility * 0.25) +
         (attrs.psyche * 0.45);
 
-      return parseInt(resistance * 10, "10");
+      return parseInt(resistance * 2, "10");
     }
 
 

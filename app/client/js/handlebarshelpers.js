@@ -7,3 +7,7 @@ Handlebars.registerHelper('arrayify',function(obj){
 Handlebars.registerHelper("equals", function(x, y) {
   return x == y;
 })
+
+Handlebars.registerHelper("session", function(key) {
+  return Session.get(key);
+})

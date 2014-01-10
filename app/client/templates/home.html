@@ -1,36 +1,44 @@
 <template name="home">
   <h1>Welcome Back to Life.</h1>
 
-  <h2>My teams</h2>
-  <ul>
-    {{#each teams}}
-      <li>
-	{{name}}: {{descr}}
-	<ul>
-	  {{#each getCharacters}}
-            <li>{{name}}</li>
-	  {{/each}}
-	</ul>
-      </li>
-    {{/each}}
-  </ul>
-
   {{#if currentUser}}
-    <div class="addTeam">
-      <div class="teamName">
-        name: <input type="text" id="team" />
+
+    <h2>My teams</h2>
+    <ul>
+      {{#each teams}}
+      <li>{{name}}
+        {{#if descr}}: {{descr}}{{/if}}
+          <ul>
+            {{#each getCharacters}}
+              <li>{{name}}</li>
+            {{/each}}
+          </ul>
+        </li>
+      {{/each}}
+    </ul>
+
+    {{#if session 'showAddTeam'}}
+      <div class="addTeam">
+        <div class="teamName">
+          Team name: <input type="text" id="team" placeholder="House Baratheon..."/>
+        </div>
+        <div class="teamDescription">
+          Description: <textarea id="description" placeholder="Wips the llama's ass..."></textarea>
+        </div>
+        <input type="submit" class="add" value="Add team" />
+        <a href="#" class="cancel" id="cancel-add-team">cancel</a>
       </div>
-      <div class="teamDescription">
-        description: <textarea id="description"></textarea>
-      </div>
-      <input type="button" class="add" value="Add team" />
-    </div>
+    {{else}}
+      <button id="new-team">New team</button>
+    {{/if}}
+
+    <h2>My games</h2>
+    <ul>
+      {{#each games}}
+        <li><a href="{{pathFor 'game'}}">{{name}}</a></li>
+      {{/each}}
+    </ul>
+  {{else}}
+    <p>Login to get started.</p>
   {{/if}}
-  
-  <h2>My games</h2>
-  <ul>
-    {{#each games}}
-      <li><a href="{{pathFor 'game'}}">{{name}}</a></li>
-    {{/each}}
-  </ul>
 </template>

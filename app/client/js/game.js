@@ -118,11 +118,3 @@ var events = {
 
 Template.game.helpers(helpers);
 Template.game.events(events);
-
-Template.home.events({
-  'click input.add': function (e,tmpl) {
-    Teams.insert({name: tmpl.find("#team").value,
-		  owner: Meteor.userId(),
-		  descr: tmpl.find("#description").value});
-  }
-});

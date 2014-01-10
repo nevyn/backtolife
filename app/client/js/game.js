@@ -51,7 +51,9 @@ var events = {
                 }
     );
   },
-
+  'input input[type="range"]': function(e, tmpl) {
+    $('#price-input-value').html(e.target.value);
+  },
   /*
    * Submit the form with all inputs to finalize
    * an ability event.

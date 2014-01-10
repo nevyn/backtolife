@@ -38,6 +38,10 @@ Characters = new Meteor.Collection("characters", {
       return parseInt(stamina * 10, "10");
     }
 
+    character.abilities = Abilities.find({
+      name: {$in: character.abilities}
+    });
+
     /*
      * Return the amounts for this specific game.
      */
@@ -110,7 +114,14 @@ Games = new Meteor.Collection("games", {
   }
 });
 
-Abilities = new Meteor.Collection("abilities");
+Abilities = new Meteor.Collection("abilities", {
+  transform: function (ability) {
+
+    ability.prettyPrice = ability.price + ability.currency.substr(0, 1).toUpperCase();
+
+    return ability;
+  }
+});
 Events = new Meteor.Collection("events", {
   transform: function(e) {
     // TODO: Move to transform

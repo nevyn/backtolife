@@ -49,7 +49,10 @@ Meteor.methods({
     Characters.update({
       team: team._id
     }, {
-      $set: {"state.stamina": -1}
+      $set: {
+        "state.stamina": -1,
+        "state.mana": -1
+      }
     }, {
       multi: true
     });

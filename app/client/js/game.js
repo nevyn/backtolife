@@ -1,5 +1,22 @@
 var helpers = {
   /*
+   * Double check that the character can perform magic before
+   * outputting magic abilities.
+   *
+   * This can be refactored once abilities are better
+   * selected on a per-character basis.
+   */
+  hasAbility: function(characterId) {
+    var character = Characters.findOne(characterId);
+    var ability = this;
+
+    if (ability.currency === "mana" && character.getMana() === 0) {
+      return false;
+    }
+
+    return true;
+  },
+  /*
    * Characters can only perform abilities if:
    * - it's their team's turn,
    * - they don't have any active events,
@@ -8,7 +25,7 @@ var helpers = {
   canPerformAbility: function(characterId) {
     var data = Router.getData();
     var hasActiveEvents = GetActiveEventsForCharacter(data.game._id, characterId).count();
-    var ability = Abilities.findOne({name: this.toString()});
+    var ability = this;
     var character = Characters.findOne(characterId);
 
     if (!ability) return false;
@@ -44,7 +61,7 @@ var events = {
   'click .ability': function(e, tmpl) {
     Meteor.call('newAbilityEvent',
                 Router.getData().game._id,
-                $(e.target).data('ability'),
+                this.name,
                 $(e.target).data('character'),
                 function(err, res) {
                   console.log(err, res);

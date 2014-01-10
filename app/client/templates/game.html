@@ -80,16 +80,19 @@
         </table>
 
         {{#each abilities}}
-          <div>
-            {{#if canPerformAbility ../_id}}
+          {{#if hasAbility ../_id}}
+            <div>
               <button
-                class="ability"
-                data-ability="{{this}}"
-                data-character="{{../../_id}}">{{this}}</button>
-            {{else}}
-              <button disabled="disabled">{{this}}</button>
-            {{/if}}
-          </div>
+                {{#unless canPerformAbility ../../_id}}disabled="disabled"{{/unless}}
+                data-character="{{../../_id}}"
+                class="ability">
+                {{name}}
+                {{#unless equals price -1}}
+                  <span>{{prettyPrice}}</span>
+                {{/unless}}
+              </button>
+            </div>
+          {{/if}}
         {{/each}}
 
         <table class="attributes">

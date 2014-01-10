@@ -1,9 +1,7 @@
 <template name="game">
   <div id="game">
-    <p><a href="{{pathFor 'home'}}">Home</a></p>
-    <h1>Game: {{game.name}}</h1>
+    <h1>Game: {{game.name}} <a href="{{pathFor 'home'}}">Back</a></h1>
     {{#if activeEvents}}
-    <div>Active events:</div>
     <ul>
       {{#each activeEvents}}
         <li>
@@ -25,10 +23,10 @@
                   <p>Roll {{diceRoll}}+ on two dice.</p>
                   <small>That means you need to roll at least {{diceRoll}} or more on two standard d6 dice to make it.</small>
                   <p>
-                    <input type="radio" name="dice-roll-result" value="success"> I made it
+                    <label><input type="radio" name="dice-roll-result" value="success"> I made it</label>
                   </p>
                   <p>
-                    <input type="radio" name="dice-roll-result" value="failure"> I didn't make it
+                    <label><input type="radio" name="dice-roll-result" value="failure"> I didn't make it</label>
                   </p>
                 {{/if}}
                 {{#if equals type "target-opponent"}}
@@ -60,56 +58,60 @@
           <li>{{name}}
             {{#if equals ../game.currentTurn _id}}
               (TURN)
+              {{#if ../../isItMyTurn}}
+                <button id="end-turn">End turn</button>
+              {{/if}}
             {{/if}}
           </li>
         {{/each}}
       </ul>
     </div>
-    <div>
-      {{#if isItMyTurn}}
-        <button id="end-turn">End turn</button>
-      {{/if}}
-    </div>
 
-    <div>
+    <div id="my-characters">
     {{#each myCharacters}}
       <div class="character">
         <h3>{{name}}</h3>
-        <div>HP: {{getState.hitPoints}}/{{getHitPoints}}</div>
-        <div>Mana: {{getState.mana}}/{{getMana}}</div>
-        <div>Stamina: {{getState.stamina}}/{{getStamina}}</div>
-        <div>Damage: {{getDamage}}</div>
-        <div>Magic resistance: {{getMagicResistance}}</div>
-        <ul>
+        <table>
+          <tr><td>HP</td><td> {{getState.hitPoints}}<span class="max">/{{getHitPoints}}</span></td></tr>
+            <tr><td>Mana</td><td> {{getState.mana}}<span class="max">/{{getMana}}</span></td></tr>
+            <tr><td>Stamina</td><td> {{getState.stamina}}<span class="max">/{{getStamina}}</span></td></tr>
+          <tr><td>Damage</td><td> {{getDamage}}</td></tr>
+          <tr><td>Resistance</td><td> {{getMagicResistance}}</td></tr>
+        </table>
+
+        {{#each abilities}}
+          <div>
+            {{#if canPerformAbility ../_id}}
+              <button
+                class="ability"
+                data-ability="{{this}}"
+                data-character="{{../../_id}}">{{this}}</button>
+            {{else}}
+              <button disabled="disabled">{{this}}</button>
+            {{/if}}
+          </div>
+        {{/each}}
+
+        <table class="attributes">
           {{#each arrayify attributes}}
-            <li>{{key}}: {{value}}</li>
+          <tr><td>{{key}}</td><td>{{value}}</td></tr>
           {{/each}}
-        </ul>
-          {{#each abilities}}
-            <div>
-              {{#if canPerformAbility ../_id}}
-                <button
-                  class="ability"
-                  data-ability="{{this}}"
-                  data-character="{{../../_id}}">{{this}}</button>
-              {{else}}
-                <button disabled="disabled">{{this}}</button>
-              {{/if}}
-            </div>
-          {{/each}}
+        </table>
       </div>
     {{/each}}
     </div>
 
-    <h2 class="clear">History</h2>
-    <ul>
-      {{#each history}}
-        <li>
-          {{character.name}}:
-          {{state}}
-          {{ability.name}}
-        </li>
-      {{/each}}
-    </ul>
+    <div id="history">
+      <h2 class="clear">History</h2>
+      <ul>
+        {{#each history}}
+          <li>
+            {{character.name}}:
+            {{state}}
+            {{ability.name}}
+          </li>
+        {{/each}}
+      </ul>
+    </div>
   </div>
 </template>

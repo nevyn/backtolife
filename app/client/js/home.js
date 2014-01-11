@@ -1,4 +1,7 @@
 Template.home.events({
+  /*
+   * Creating teams
+   */
   'click #new-team': function (e, tmpl) {
     Session.set("showAddTeam", true);
   },
@@ -16,8 +19,37 @@ Template.home.events({
 
     Teams.insert({name: name,
 		  owner: Meteor.userId(),
-		  descr: descr});
+		  descr: descr
+    });
 
     Session.set("showAddTeam", null);
+  },
+
+  /*
+   * Creating games
+   */
+  'click #new-game': function (e, tmpl) {
+    Session.set("showAddGame", true);
+  },
+  'click #cancel-add-game': function (e, tmpl) {
+    Session.set("showAddGame", null);
+  },
+  'submit #create-game': function (e,tmpl) {
+    name = tmpl.find("#game-name").value;
+
+    if (!name) {
+      alert('Need a name please');
+      return;
+    }
+
+    Games.insert({name: name,
+		  teams: [],
+      turnNr: 1,
+      playedThisTurn: [],
+      createdAt: new Date(),
+      name: name
+    });
+
+    Session.set("showAddGame", null);
   }
 });

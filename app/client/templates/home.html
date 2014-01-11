@@ -32,12 +32,25 @@
       <button id="new-team">New team</button>
     {{/if}}
 
-    <h2>My games</h2>
+    <h2>Battles</h2>
     <ul>
       {{#each games}}
         <li><a href="{{pathFor 'game'}}">{{name}}</a></li>
       {{/each}}
     </ul>
+
+    {{#if session 'showAddGame'}}
+      <form id="create-game">
+        <div class="gameName">
+          Game name: <input type="text" id="game-name" placeholder="Battle of Middle Earth..."/>
+        </div>
+        <input type="submit" class="add" value="Create game" />
+        <a href="#" class="cancel" id="cancel-add-game">cancel</a>
+      </form>
+    {{else}}
+      <button id="new-game">New game</button>
+    {{/if}}
+
   {{else}}
     <p>Login to get started.</p>
   {{/if}}

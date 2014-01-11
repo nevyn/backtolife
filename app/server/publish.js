@@ -27,7 +27,8 @@ Meteor.publish('teams-and-characters', function(gameId) {
 Meteor.publish('games', function() {
   if (!this.userId) return;
 
-  // Publish all games my teams are a part of
+  /*
+   * TODO: Publish all games my teams are a part of
   return Games.find({
     teams: {
       $in: Teams.find({owner: this.userId}).map(function(t) {
@@ -35,6 +36,9 @@ Meteor.publish('games', function() {
       })
     }
   });
+  */
+
+  return Games.find();
 });
 
 Meteor.publish('events', function(gameId) {

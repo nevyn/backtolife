@@ -5,6 +5,8 @@ GetGameAndCheckPermission = function(gameId, userId) {
     throw new Meteor.Error(404, "No such game");
   }
 
+  /*
+   * TODO: Re-enable
   var team = Teams.findOne({
     owner: userId,
     _id: {$in: game.teams}
@@ -13,6 +15,7 @@ GetGameAndCheckPermission = function(gameId, userId) {
   if (!team) {
     throw new Meteor.Error(403, "Permission denied, you're not part of this game.");
   }
+  */
 
   return game;
 }

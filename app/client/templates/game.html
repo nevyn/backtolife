@@ -65,6 +65,11 @@
           </li>
         {{/each}}
       </ul>
+      {{#unless myTeam}}
+        {{#if currentUser}}
+          <button id="join-game">Join game</button>
+        {{/if}}
+      {{/unless}}
     </div>
 
     <div id="my-characters">

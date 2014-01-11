@@ -28,7 +28,7 @@ Meteor.publish('games', function() {
   if (!this.userId) return;
 
   /*
-   * TODO: Publish all games my teams are a part of
+   * TODO: Reenable. Publish all games my teams are a part of
   return Games.find({
     teams: {
       $in: Teams.find({owner: this.userId}).map(function(t) {

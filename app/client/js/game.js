@@ -57,6 +57,14 @@ var events = {
       console.log(err, res);
     });
   },
+  'click #join-game': function() {
+    Meteor.call('joinGame',
+                Router.getData().game._id,
+                function(err, res) {
+                  console.log(err, res);
+                }
+    );
+  },
   // Perform new ability
   'click .ability': function(e, tmpl) {
     Meteor.call('newAbilityEvent',

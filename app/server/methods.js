@@ -3,6 +3,19 @@ function checkLoggedIn() {
 }
 
 Meteor.methods({
+  'joinGame': function(gameId) {
+    // TODO: Select a team.
+
+    Games.update(gameId, {
+      $addToSet: {
+        teams: Teams.findOne({
+          owner: Meteor.userId()
+        })._id
+      }
+    });
+
+    return "Great success";
+  },
   'endMyTurn': function(gameId) {
     checkLoggedIn();
     check(gameId, String);
